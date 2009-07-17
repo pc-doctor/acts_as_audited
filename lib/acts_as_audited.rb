@@ -198,6 +198,11 @@ module CollectiveIdea #:nodoc:
         end
 
         def write_audit(attrs)
+          if !Authlogic::Session::Base.controller.nil? && UserSession.find(:proxy)
+            attrs[:proxy_user] = UserSession.find(:proxy).user
+            attrs[:user] = UserSession.find.user
+          end
+
           self.audits.create attrs if auditing_enabled
         end
 

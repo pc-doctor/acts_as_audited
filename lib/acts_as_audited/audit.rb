@@ -11,6 +11,8 @@ require 'set'
 class Audit < ActiveRecord::Base
   belongs_to :auditable, :polymorphic => true
   belongs_to :user, :polymorphic => true
+  belongs_to :proxy_user, :class_name => 'User', :foreign_key => 'proxy_user_id'
+
 
   before_create :set_version_number, :set_audit_user
 
