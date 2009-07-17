@@ -3,6 +3,7 @@ class <%= class_name %> < ActiveRecord::Migration
     create_table :audits, :force => true do |t|
       t.column :auditable_id, :integer
       t.column :auditable_type, :string
+			t.column :proxy_user_id, :integer
       t.column :user_id, :integer
       t.column :user_type, :string
       t.column :username, :string
