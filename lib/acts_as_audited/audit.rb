@@ -12,10 +12,10 @@ class Audit < ActiveRecord::Base
   belongs_to :auditable, :polymorphic => true
   belongs_to :user, :polymorphic => true
   belongs_to :proxy_user, :class_name => 'User', :foreign_key => 'proxy_user_id'
-
+  belongs_to :auditable_parent, :polymorphic => true
 
   before_create :set_version_number, :set_audit_user
-
+  
   serialize :changes
 
   cattr_accessor :audited_class_names
@@ -24,9 +24,6 @@ class Audit < ActiveRecord::Base
   def self.audited_classes
     self.audited_class_names.map(&:constantize)
   end
-
-  cattr_accessor :audit_as_user
-  self.audit_as_user = nil
 
   # All audits made during the block called will be recorded as made
   # by +user+. This method is hopefully threadsafe, making it ideal
@@ -72,7 +69,7 @@ class Audit < ActiveRecord::Base
   # Returns a hash of the changed attributes with the new values
   def new_attributes
     (changes || {}).inject({}.with_indifferent_access) do |attrs,(attr,values)|
-      attrs[attr] = Array(values).last
+      attrs[attr] = values.is_a?(Array) ? values.last : values
       attrs
     end
   end
